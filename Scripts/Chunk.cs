@@ -1,6 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using MilkSpun.ChunkWorld.Models;
+using MilkSpun.ChunWorld.Extentions;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -17,7 +20,8 @@ namespace MilkSpun.ChunkWorld.Main
         private List<Vector3> _vertices;
         private List<int> _triangles;
         private List<Vector2> _uvs;
-        private bool[,,] _voxelMap;
+        private VoxelMapType[,,] _voxelMap;
+        private World _world;
 
         [OnInspectorInit]
         private void Awake()
@@ -30,7 +34,7 @@ namespace MilkSpun.ChunkWorld.Main
         [Button("生成地块")]
         private void Start()
         {
-
+            _world = GameObject.Find("World").GetComponent<World>();
             InitData();
             PopulateVoxelMap();
             CreateMeshData();
@@ -43,10 +47,11 @@ namespace MilkSpun.ChunkWorld.Main
             var y = Mathf.FloorToInt(pos.y);
             var z = Mathf.FloorToInt(pos.z);
 
-            if (x < 0 || x > VoxelData.ChunkWidth - 1 || y < 0 || y > VoxelData.ChunkHeight - 1 || z < 0 || z > VoxelData.ChunkWidth - 1)
+            if (x is < 0 or > VoxelData.ChunkWidth - 1 || y is < 0 or > VoxelData.ChunkHeight - 1 || z is < 0 or > VoxelData.ChunkWidth - 1)
                 return false;
 
-            return _voxelMap[x, y, z];
+            return _world.blockTypes.First(b => b.voxelMapType == _voxelMap[x, y, z]).isSolid;
+
         }
 
         private void InitData()
@@ -55,7 +60,7 @@ namespace MilkSpun.ChunkWorld.Main
             _vertices = new List<Vector3>();
             _triangles = new List<int>();
             _uvs = new List<Vector2>();
-            _voxelMap = new bool[VoxelData.ChunkWidth, VoxelData.ChunkHeight, VoxelData.ChunkWidth];
+            _voxelMap = new VoxelMapType[VoxelData.ChunkWidth, VoxelData.ChunkHeight, VoxelData.ChunkWidth];
         }
 
         private void CreateMeshData()
@@ -66,7 +71,7 @@ namespace MilkSpun.ChunkWorld.Main
                 {
                     for (var z = 0; z < VoxelData.ChunkWidth; z++)
                     {
-                        AddVoxelDataToChunk(new Vector3(x, y, z));
+                        AddVoxelDataToChunk(new Vector3Int(x, y, z));
                     }
                 }
             }
@@ -80,28 +85,36 @@ namespace MilkSpun.ChunkWorld.Main
                 {
                     for (var z = 0; z < VoxelData.ChunkWidth; z++)
                     {
-                        _voxelMap[x, y, z] = true;
+                        _voxelMap[x, y, z] = VoxelMapType.LightGrass;
                     }
                 }
             }
         }
 
-        private void AddVoxelDataToChunk(Vector3 offset)
+        private void AddVoxelDataToChunk(Vector3Int offset)
         {
             for (var p = 0; p < 6; p++)
             {
                 if (CheckVoxel(offset + VoxelData.FaceChecks[p])) continue;
 
-                for (var i = 0; i < 6; i++)
+                var blockID = _voxelMap[offset.x, offset.y, offset.z];
+
+                for (var i = 0; i < 4; i++)
                 {
                     var triangleIndex = VoxelData.VoxelTris[p, i];
-                    _vertices.Add(VoxelData.VexelVerts[triangleIndex] + offset);
-                    _triangles.Add(_vertexIndex);
-
-                    _uvs.Add(VoxelData.VoxelUVs[i]);
-
-                    _vertexIndex++;
+                    _vertices.Add(VoxelData.VoxelVerts[triangleIndex] + offset);
                 }
+
+                var faceType = (BlockFaceType)p;
+                AddTexture(_world.GetBlockTypeIndex(blockID).GetTextureID(faceType));
+
+                _triangles.Add(_vertexIndex);
+                _triangles.Add(_vertexIndex + 1);
+                _triangles.Add(_vertexIndex + 2);
+                _triangles.Add(_vertexIndex + 2);
+                _triangles.Add(_vertexIndex + 1);
+                _triangles.Add(_vertexIndex + 3);
+                _vertexIndex += 4;
             }
         }
 
@@ -117,6 +130,22 @@ namespace MilkSpun.ChunkWorld.Main
             mesh.RecalculateNormals();
 
             _meshFilter.mesh = mesh;
+        }
+
+        private void AddTexture(int textureID)
+        {
+            var y = (float)textureID / VoxelData.TextureAtlasSizeInBlocks;
+            var x = textureID - (y * VoxelData.TextureAtlasSizeInBlocks);
+
+            x *= VoxelData.NormalizedBlockTextureSize;
+            y *= VoxelData.NormalizedBlockTextureSize;
+
+            y = 1f - y - VoxelData.NormalizedBlockTextureSize;
+
+            _uvs.Add(new Vector2(x, y));
+            _uvs.Add(new Vector2(x, y + VoxelData.NormalizedBlockTextureSize));
+            _uvs.Add(new Vector2(x + VoxelData.NormalizedBlockTextureSize, y));
+            _uvs.Add(new Vector2(x + VoxelData.NormalizedBlockTextureSize, y + VoxelData.NormalizedBlockTextureSize));
         }
     }
 }

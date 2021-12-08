@@ -1,0 +1,19 @@
+{
+    "name": "MilkSpun.ChunkWorld.Main",
+    "rootNamespace": "MilkSpun.ChunkWorld.Main",
+    "references": [
+        "GUID:c9127852cc37547ca8ee75ade2bd4328",
+        "GUID:9f29e78644faa4ee5b8b8c1e35139a39",
+        "GUID:2a33150a68994463b9233fe230fcff8f",
+        "GUID:3c06d67cd745740bf835e651347c5933"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

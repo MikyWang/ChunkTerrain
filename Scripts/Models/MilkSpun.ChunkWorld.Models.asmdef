@@ -1,10 +1,7 @@
 {
-    "name": "MilkSpun.ChunkWorld.Main",
-    "rootNamespace": "MilkSpun.ChunkWorld.Main",
-    "references": [
-        "GUID:c9127852cc37547ca8ee75ade2bd4328",
-        "GUID:9f29e78644faa4ee5b8b8c1e35139a39"
-    ],
+    "name": "MilkSpun.ChunkWorld.Models",
+    "rootNamespace": "MilkSpun.ChunkWorld.Models",
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
