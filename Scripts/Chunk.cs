@@ -174,11 +174,12 @@ namespace MilkSpun.ChunkWorld.Main
             var x = col * VoxelData.NormalizedBlockTextureSize;
             var y = invertedRow * VoxelData.NormalizedBlockTextureSize;
 
-            _uv.Add(new Vector2(x, y));
-            _uv.Add(new Vector2(x, y + VoxelData.NormalizedBlockTextureSize));
-            _uv.Add(new Vector2(x + VoxelData.NormalizedBlockTextureSize, y));
-            _uv.Add(new Vector2(x + VoxelData.NormalizedBlockTextureSize,
-                y + VoxelData.NormalizedBlockTextureSize));
+            var uvOffset = 0.001f;
+            _uv.Add(new Vector2(x + uvOffset, y + uvOffset));
+            _uv.Add(new Vector2(x + uvOffset, y + VoxelData.NormalizedBlockTextureSize - uvOffset));
+            _uv.Add(new Vector2(x + VoxelData.NormalizedBlockTextureSize - uvOffset, y + uvOffset));
+            _uv.Add(new Vector2(x + VoxelData.NormalizedBlockTextureSize - uvOffset,
+                y + VoxelData.NormalizedBlockTextureSize - uvOffset));
 
 
             var index = textureID / VoxelData.TextureAtlasSize;
