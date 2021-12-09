@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0634ebd99d9aa46a0b57da1f8c716288, type: 3}
+  m_Name: Block_Textures
+  m_EditorClassIdentifier: 
+  textures:
+  - {fileID: 2800000, guid: a40b57a085228754fa86de4989570294, type: 3}
+  - {fileID: 2800000, guid: c279e7d496bd2d7418147ef8b14de3dd, type: 3}
+  - {fileID: 2800000, guid: 94432ea85b0b23249916071ad350187f, type: 3}
+  - {fileID: 2800000, guid: 8711f05f798813a45b21313f0a03287e, type: 3}
+  - {fileID: 2800000, guid: 669d4bc7748c8bd48979de0aa33b2e56, type: 3}
+  - {fileID: 2800000, guid: d12948391757d2c40be6aa0c80f1159f, type: 3}
+  - {fileID: 2800000, guid: 149db047c6ff9854898a574ceec6d7d6, type: 3}
+  - {fileID: 2800000, guid: 4fae8c3ceaef2af45bd81b46589c841d, type: 3}
+  - {fileID: 2800000, guid: 44b7a666eecc3784b8ae80edb1d37555, type: 3}

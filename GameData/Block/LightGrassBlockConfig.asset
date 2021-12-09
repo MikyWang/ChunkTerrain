@@ -14,9 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   voxelMapType: 0
   isSolid: 1
+  page: 0
   backFaceTexture: 4
   frontFaceTexture: 4
   topFaceTexture: 0
-  bottomFaceTexture: 12
+  bottomFaceTexture: 0
   leftFaceTexture: 4
   rightFaceTexture: 4

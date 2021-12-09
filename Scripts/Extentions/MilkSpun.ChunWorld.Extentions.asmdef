@@ -2,7 +2,8 @@
     "name": "MilkSpun.ChunWorld.Extentions",
     "rootNamespace": "MilkSpun.ChunWorld.Extentions",
     "references": [
-        "GUID:2a33150a68994463b9233fe230fcff8f"
+        "GUID:2a33150a68994463b9233fe230fcff8f",
+        "GUID:b63fd6560fb1e4370998fd6203aa8511"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

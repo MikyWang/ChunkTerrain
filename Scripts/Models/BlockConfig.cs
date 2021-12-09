@@ -14,6 +14,9 @@ public class BlockConfig : ScriptableObject
     [Tooltip("是否为固体.")]
     public bool isSolid;
     [Title("纹理ID")]
+    [Tooltip("使用第几页纹理")]
+    [Range(0,8)]
+    public int page;
     [Tooltip("后面纹理")]
     public int backFaceTexture;
     [Tooltip("前面纹理")]

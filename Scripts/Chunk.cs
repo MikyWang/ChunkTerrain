@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using MilkSpun.ChunkWorld.Models;
+using MilkSpun.ChunkWorld.Utils;
 using MilkSpun.ChunWorld.Extentions;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -19,7 +20,8 @@ namespace MilkSpun.ChunkWorld.Main
         private int _vertexIndex;
         private List<Vector3> _vertices;
         private List<int> _triangles;
-        private List<Vector2> _uvs;
+        private List<Vector2> _uv;
+        private List<Vector2> _uv2;
         private VoxelMapType[,,] _voxelMap;
         private World _world;
 
@@ -59,7 +61,8 @@ namespace MilkSpun.ChunkWorld.Main
             _vertexIndex = 0;
             _vertices = new List<Vector3>();
             _triangles = new List<int>();
-            _uvs = new List<Vector2>();
+            _uv = new List<Vector2>();
+            _uv2 = new List<Vector2>();
             _voxelMap = new VoxelMapType[VoxelData.ChunkWidth, VoxelData.ChunkHeight, VoxelData.ChunkWidth];
         }
 
@@ -85,7 +88,18 @@ namespace MilkSpun.ChunkWorld.Main
                 {
                     for (var z = 0; z < VoxelData.ChunkWidth; z++)
                     {
-                        _voxelMap[x, y, z] = VoxelMapType.LightGrass;
+                        switch (y)
+                        {
+                            case VoxelData.ChunkHeight - 1:
+                                _voxelMap[x, y, z] = VoxelMapType.Grass;
+                                continue;
+                            case < 1:
+                                _voxelMap[x, y, z] = VoxelMapType.Rock;
+                                continue;
+                            default:
+                                _voxelMap[x, y, z] = VoxelMapType.Dirt;
+                                break;
+                        }
                     }
                 }
             }
@@ -107,7 +121,6 @@ namespace MilkSpun.ChunkWorld.Main
 
                 var faceType = (BlockFaceType)p;
                 AddTexture(_world.GetBlockTypeIndex(blockID).GetTextureID(faceType));
-
                 _triangles.Add(_vertexIndex);
                 _triangles.Add(_vertexIndex + 1);
                 _triangles.Add(_vertexIndex + 2);
@@ -124,7 +137,8 @@ namespace MilkSpun.ChunkWorld.Main
             {
                 vertices = _vertices.ToArray(),
                 triangles = _triangles.ToArray(),
-                uv = _uvs.ToArray()
+                uv = _uv.ToArray(),
+                uv2 = _uv2.ToArray()
             };
 
             mesh.RecalculateNormals();
@@ -134,18 +148,28 @@ namespace MilkSpun.ChunkWorld.Main
 
         private void AddTexture(int textureID)
         {
-            var y = (float)textureID / VoxelData.TextureAtlasSizeInBlocks;
-            var x = textureID - (y * VoxelData.TextureAtlasSizeInBlocks);
+            var id = textureID % VoxelData.TextureAtlasSize;
 
-            x *= VoxelData.NormalizedBlockTextureSize;
-            y *= VoxelData.NormalizedBlockTextureSize;
+            var row = id / VoxelData.TextureAtlasSizeInBlocks;
+            var invertedRow = (VoxelData.TextureAtlasSizeInBlocks - 1) - row;
+            var col = id % VoxelData.TextureAtlasSizeInBlocks;
 
-            y = 1f - y - VoxelData.NormalizedBlockTextureSize;
+            var x = col * VoxelData.NormalizedBlockTextureSize;
+            var y = invertedRow * VoxelData.NormalizedBlockTextureSize;
 
-            _uvs.Add(new Vector2(x, y));
-            _uvs.Add(new Vector2(x, y + VoxelData.NormalizedBlockTextureSize));
-            _uvs.Add(new Vector2(x + VoxelData.NormalizedBlockTextureSize, y));
-            _uvs.Add(new Vector2(x + VoxelData.NormalizedBlockTextureSize, y + VoxelData.NormalizedBlockTextureSize));
+            _uv.Add(new Vector2(x, y));
+            _uv.Add(new Vector2(x, y + VoxelData.NormalizedBlockTextureSize));
+            _uv.Add(new Vector2(x + VoxelData.NormalizedBlockTextureSize, y));
+            _uv.Add(new Vector2(x + VoxelData.NormalizedBlockTextureSize, y + VoxelData.NormalizedBlockTextureSize));
+
+
+            var index = textureID / VoxelData.TextureAtlasSize;
+            var v = index % 8;
+            for (var i = 0; i < 4; i++)
+            {
+                _uv2.Add(new Vector2(v, v));
+            }
+
         }
     }
 }

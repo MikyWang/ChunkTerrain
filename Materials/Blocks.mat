@@ -33,8 +33,20 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _BlockArray:
+        m_Texture: {fileID: 18700000, guid: f564d431e2f614ffba3a505e80c41eeb, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BlockArray1:
+        m_Texture: {fileID: 18700000, guid: f564d431e2f614ffba3a505e80c41eeb, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BlockArray2:
+        m_Texture: {fileID: 18700000, guid: 0fe24b4129c11435683e458dd2c03a3b, type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _Texture2D_Array:
-        m_Texture: {fileID: 18700000, guid: c866a9936f9e34b4eaed9d82c93d1dc0, type: 2}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _testArray:
