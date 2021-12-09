@@ -10,7 +10,8 @@ namespace MilkSpun.ChunkWorld.Utils
         public const int ChunkWidth = 5;
         public const int ChunkHeight = 15;
         public const int TextureAtlasSizeInBlocks = 4;
-        public const int WorldSizeInChunks = 2;
+        public const int WorldSizeInChunks = 100;
+        public const int ViewDistanceInChunks = 1;
         public const int WorldSizeInVoxels = WorldSizeInChunks * ChunkWidth;
         public const float NormalizedBlockTextureSize = 1f / TextureAtlasSizeInBlocks;
         public const int TextureAtlasSize = TextureAtlasSizeInBlocks * TextureAtlasSizeInBlocks;
