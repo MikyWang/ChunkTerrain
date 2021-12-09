@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 45d78bfd5977b46b3ad119b995645756, type: 3}
-  m_Name: DirtBlockConfig
+  m_Name: AirBlockConfig
   m_EditorClassIdentifier: 
-  voxelMapType: 3
-  isSolid: 1
+  voxelMapType: 0
+  isSolid: 0
   page: 0
-  backFaceTexture: 13
-  frontFaceTexture: 13
-  topFaceTexture: 9
-  bottomFaceTexture: 9
-  leftFaceTexture: 13
-  rightFaceTexture: 13
+  backFaceTexture: 0
+  frontFaceTexture: 0
+  topFaceTexture: 0
+  bottomFaceTexture: 0
+  leftFaceTexture: 0
+  rightFaceTexture: 0

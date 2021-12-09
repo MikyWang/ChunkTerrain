@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 45d78bfd5977b46b3ad119b995645756, type: 3}
-  m_Name: RockBlockConfig
+  m_Name: StoneBlockConfig
   m_EditorClassIdentifier: 
-  voxelMapType: 3
+  voxelMapType: 4
   isSolid: 1
   page: 2
   backFaceTexture: 14

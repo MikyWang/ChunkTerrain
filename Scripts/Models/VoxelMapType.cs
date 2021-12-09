@@ -6,9 +6,10 @@ namespace MilkSpun.ChunkWorld.Models
 {
     public enum VoxelMapType : byte
     {
+        Air,
         LightGrass,
         Grass,
         Dirt,
-        Rock
+        Stone
     }
 }

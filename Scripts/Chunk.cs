@@ -11,9 +11,10 @@ using Random = UnityEngine.Random;
 
 namespace MilkSpun.ChunkWorld.Main
 {
-    [RequireComponent(typeof(MeshRenderer), typeof(MeshFilter))]
-    public class Chunk : MonoBehaviour
+    public class Chunk
     {
+        public ChunkCoord Coord;
+
         private MeshRenderer _meshRenderer;
         private MeshFilter _meshFilter;
 
@@ -24,23 +25,47 @@ namespace MilkSpun.ChunkWorld.Main
         private List<Vector2> _uv2;
         private VoxelMapType[,,] _voxelMap;
         private World _world;
+        private GameObject _chunkObject;
 
-        [OnInspectorInit]
-        private void Awake()
+        public bool IsActive
         {
-            _meshRenderer = GetComponent<MeshRenderer>();
-            _meshFilter = GetComponent<MeshFilter>();
-
+            get => _chunkObject.activeSelf;
+            set => _chunkObject.SetActive(value);
         }
 
-        [Button("生成地块")]
-        private void Start()
+        public Vector3 Position => _chunkObject.transform.position;
+
+        public Chunk(World world, ChunkCoord coord)
         {
-            _world = GameObject.Find("World").GetComponent<World>();
+            InitChunk(world, coord);
             InitData();
             PopulateVoxelMap();
             CreateMeshData();
             CreateMesh();
+        }
+
+        private void InitChunk(World world, ChunkCoord chunkCoord)
+        {
+            _world = world;
+            Coord = chunkCoord;
+            _chunkObject = new GameObject(chunkCoord.ToString());
+            _chunkObject.transform.SetParent(_world.transform);
+            _chunkObject.transform.position = new Vector3
+            {
+                x = chunkCoord.x * VoxelData.ChunkWidth,
+                y = 0f,
+                z = chunkCoord.z * VoxelData.ChunkWidth
+            };
+            _meshFilter = _chunkObject.AddComponent<MeshFilter>();
+            _meshRenderer = _chunkObject.AddComponent<MeshRenderer>();
+            _meshRenderer.material = _world.material;
+        }
+
+        private bool IsVoxelInChunk(int x, int y, int z)
+        {
+            return x is >= 0 and < VoxelData.ChunkWidth &&
+                   y is >= 0 and < VoxelData.ChunkHeight &&
+                   z is >= 0 and < VoxelData.ChunkWidth;
         }
 
         private bool CheckVoxel(Vector3 pos)
@@ -49,10 +74,11 @@ namespace MilkSpun.ChunkWorld.Main
             var y = Mathf.FloorToInt(pos.y);
             var z = Mathf.FloorToInt(pos.z);
 
-            if (x is < 0 or > VoxelData.ChunkWidth - 1 || y is < 0 or > VoxelData.ChunkHeight - 1 || z is < 0 or > VoxelData.ChunkWidth - 1)
-                return false;
+            if (!IsVoxelInChunk(x, y, z))
+                return _world.GetBlockTypeIndex(_world.GetVoxel
+                    (pos + Position)).isSolid;
 
-            return _world.blockTypes.First(b => b.voxelMapType == _voxelMap[x, y, z]).isSolid;
+            return _world.GetBlockTypeIndex(_voxelMap[x, y, z]).isSolid;
 
         }
 
@@ -63,7 +89,8 @@ namespace MilkSpun.ChunkWorld.Main
             _triangles = new List<int>();
             _uv = new List<Vector2>();
             _uv2 = new List<Vector2>();
-            _voxelMap = new VoxelMapType[VoxelData.ChunkWidth, VoxelData.ChunkHeight, VoxelData.ChunkWidth];
+            _voxelMap = new VoxelMapType[VoxelData.ChunkWidth, VoxelData.ChunkHeight
+                , VoxelData.ChunkWidth];
         }
 
         private void CreateMeshData()
@@ -88,18 +115,7 @@ namespace MilkSpun.ChunkWorld.Main
                 {
                     for (var z = 0; z < VoxelData.ChunkWidth; z++)
                     {
-                        switch (y)
-                        {
-                            case VoxelData.ChunkHeight - 1:
-                                _voxelMap[x, y, z] = VoxelMapType.Grass;
-                                continue;
-                            case < 1:
-                                _voxelMap[x, y, z] = VoxelMapType.Rock;
-                                continue;
-                            default:
-                                _voxelMap[x, y, z] = VoxelMapType.Dirt;
-                                break;
-                        }
+                        _voxelMap[x, y, z] = _world.GetVoxel(new Vector3(x, y, z) + Position);
                     }
                 }
             }
@@ -135,6 +151,7 @@ namespace MilkSpun.ChunkWorld.Main
         {
             var mesh = new Mesh
             {
+                name = Coord.ToString(),
                 vertices = _vertices.ToArray(),
                 triangles = _triangles.ToArray(),
                 uv = _uv.ToArray(),
@@ -160,7 +177,8 @@ namespace MilkSpun.ChunkWorld.Main
             _uv.Add(new Vector2(x, y));
             _uv.Add(new Vector2(x, y + VoxelData.NormalizedBlockTextureSize));
             _uv.Add(new Vector2(x + VoxelData.NormalizedBlockTextureSize, y));
-            _uv.Add(new Vector2(x + VoxelData.NormalizedBlockTextureSize, y + VoxelData.NormalizedBlockTextureSize));
+            _uv.Add(new Vector2(x + VoxelData.NormalizedBlockTextureSize,
+                y + VoxelData.NormalizedBlockTextureSize));
 
 
             var index = textureID / VoxelData.TextureAtlasSize;
