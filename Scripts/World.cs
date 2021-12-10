@@ -7,9 +7,11 @@ using System.Threading.Tasks;
 using MilkSpun.ChunkWorld.Models;
 using MilkSpun.ChunkWorld.Utils;
 using MilkSpun.ChunWorld.Extentions;
+using MilkSpun.Common;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
 
 namespace MilkSpun.ChunkWorld.Main
 {
@@ -17,18 +19,20 @@ namespace MilkSpun.ChunkWorld.Main
     {
         public Material material;
         public Vector3 spawnPosition;
-        [SerializeField, InlineEditor, Space]
-        private BlockConfig[] blockConfigs;
-        [SerializeField]
-        private Transform player;
+        [SerializeField, InlineEditor, Space] private BlockConfig[] blockConfigs;
+        [SerializeField] private Transform player;
+        [SerializeField] private int seed;
         private Chunk[,] _chunks;
         private List<ChunkCoord> _activeChunks;
         private ChunkCoord _playerLastChunkCoord;
         private ChunkCoord _playerChunkCoord;
 
+        public int NoiseResolution => VoxelData.ChunkWidth;
+
         [Button("生成地形世界")]
         private void Start()
         {
+            Random.InitState(seed);
             InitChunks();
             GenerateWorld();
         }
@@ -60,16 +64,30 @@ namespace MilkSpun.ChunkWorld.Main
             player.position = spawnPosition;
             _playerLastChunkCoord = player.position.GetChunkCoordFromPosition();
         }
+        
+        //TODO:构建复杂地形逻辑
         public VoxelMapType GetVoxel(Vector3 pos)
         {
+            //默认行为
             if (!IsVoxelInWorld(pos)) return VoxelMapType.Air;
 
-            return pos.y switch
-            {
-                VoxelData.ChunkHeight - 1 => VoxelMapType.Grass,
-                < 1 => VoxelMapType.Stone,
-                _ => VoxelMapType.Dirt
-            };
+            var y = Mathf.FloorToInt(pos.y);
+            return VoxelMapType.Dirt;
+
+            // switch (y)
+            // {
+            //     case < 1:
+            //         return VoxelMapType.Stone;
+            //     case VoxelData.ChunkHeight - 1:
+            //         {
+            //             var noise =
+            //                 NoiseGenerator.Get2DPerlinNoise(new Vector2(pos.x, pos.z), 0, 1,
+            //                     NoiseResolution);
+            //             return noise < 0.5f ? VoxelMapType.LightGrass : VoxelMapType.Grass;
+            //         }
+            //     default:
+            //         return VoxelMapType.Dirt;
+            // }
         }
 
         private void CreateChunk(int x, int z)

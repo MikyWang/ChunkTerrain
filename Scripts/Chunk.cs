@@ -61,7 +61,7 @@ namespace MilkSpun.ChunkWorld.Main
             _meshRenderer.material = _world.material;
         }
 
-        private bool IsVoxelInChunk(int x, int y, int z)
+        private static bool IsVoxelInChunk(int x, int y, int z)
         {
             return x is >= 0 and < VoxelData.ChunkWidth &&
                    y is >= 0 and < VoxelData.ChunkHeight &&

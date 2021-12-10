@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -23,11 +24,23 @@ namespace MilkSpun.ChunkWorld.Models
 
         public static bool operator ==(ChunkCoord a, ChunkCoord b)
         {
-            return a.x == b.x && a.z == b.z;
+            return a.Equals(b);
         }
         public static bool operator !=(ChunkCoord a, ChunkCoord b)
         {
             return !(a == b);
+        }
+        public bool Equals(ChunkCoord other)
+        {
+            return x == other.x && z == other.z;
+        }
+        public override bool Equals(object obj)
+        {
+            return obj is ChunkCoord other && Equals(other);
+        }
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(x, z);
         }
     }
 }
