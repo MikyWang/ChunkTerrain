@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 147194f663b184b189fad1153f077a85, type: 3}
+  m_Name: Default
+  m_EditorClassIdentifier: 
+  biomeType: 0
+  solidGroundHeight: 20
+  terrainHeight: 12
+  scale: 0.25
+  lodes:
+  - {fileID: 11400000, guid: 1bee6ee8497d048eb82ad33987dfda99, type: 2}
+  - {fileID: 11400000, guid: 80a7c18c129464a1fba039e240b30684, type: 2}

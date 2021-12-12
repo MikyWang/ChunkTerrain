@@ -19,6 +19,7 @@ namespace MilkSpun.ChunkWorld.Main
     {
         public Material material;
         public Vector3 spawnPosition;
+        [SerializeField, InlineEditor] private Biome biome;
         [SerializeField, InlineEditor, Space] private BlockConfig[] blockConfigs;
         [SerializeField] private Transform player;
         [SerializeField] private int seed;
@@ -64,7 +65,7 @@ namespace MilkSpun.ChunkWorld.Main
             player.position = spawnPosition;
             _playerLastChunkCoord = player.position.GetChunkCoordFromPosition();
         }
-        
+
         //TODO:构建复杂地形逻辑
         public VoxelMapType GetVoxel(Vector3 pos)
         {
@@ -72,22 +73,46 @@ namespace MilkSpun.ChunkWorld.Main
             if (!IsVoxelInWorld(pos)) return VoxelMapType.Air;
 
             var y = Mathf.FloorToInt(pos.y);
-            return VoxelMapType.Dirt;
+            if (y == 0) return VoxelMapType.BedRock;
 
-            // switch (y)
-            // {
-            //     case < 1:
-            //         return VoxelMapType.Stone;
-            //     case VoxelData.ChunkHeight - 1:
-            //         {
-            //             var noise =
-            //                 NoiseGenerator.Get2DPerlinNoise(new Vector2(pos.x, pos.z), 0, 1,
-            //                     NoiseResolution);
-            //             return noise < 0.5f ? VoxelMapType.LightGrass : VoxelMapType.Grass;
-            //         }
-            //     default:
-            //         return VoxelMapType.Dirt;
-            // }
+            // 基础地形
+            var noise =
+                NoiseGenerator.Get2DPerlinNoise(new Vector2(pos.x, pos.z), 0, biome.scale,
+                    NoiseResolution) *
+                biome.terrainHeight;
+            var terrainHeight = Mathf.FloorToInt(noise) + biome.solidGroundHeight;
+            if (y > terrainHeight)
+            {
+                return VoxelMapType.Air;
+            }
+
+            var voxelType = VoxelMapType.Air;
+
+            if (y == terrainHeight)
+                voxelType = VoxelMapType.Grass;
+            if (y < terrainHeight)
+            {
+                voxelType = y > terrainHeight - 5 ? VoxelMapType.Dirt : VoxelMapType.Stone;
+            }
+
+            //生物多样性地形
+
+            if (voxelType == VoxelMapType.Stone)
+            {
+                foreach (var lode in biome.lodes)
+                {
+                    if (y < lode.minHeight || y > lode.maxHeight) continue;
+
+                    if (NoiseGenerator.Get3DPerlinNoise(pos, lode.offset, lode.scale,
+                            lode.threshold, 1))
+                    {
+                        voxelType = lode.voxelMapType;
+                    }
+                }
+            }
+
+            return voxelType;
+
         }
 
         private void CreateChunk(int x, int z)

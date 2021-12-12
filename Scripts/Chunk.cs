@@ -101,7 +101,8 @@ namespace MilkSpun.ChunkWorld.Main
                 {
                     for (var z = 0; z < VoxelData.ChunkWidth; z++)
                     {
-                        AddVoxelDataToChunk(new Vector3Int(x, y, z));
+                        if (_world.GetBlockTypeIndex(_voxelMap[x, y, z]).isSolid)
+                            AddVoxelDataToChunk(new Vector3Int(x, y, z));
                     }
                 }
             }
@@ -174,7 +175,7 @@ namespace MilkSpun.ChunkWorld.Main
             var x = col * VoxelData.NormalizedBlockTextureSize;
             var y = invertedRow * VoxelData.NormalizedBlockTextureSize;
 
-            const float uvOffset = 0f;
+            const float uvOffset = 0.001f;
             _uv.Add(new Vector2(x + uvOffset, y + uvOffset));
             _uv.Add(new Vector2(x + uvOffset, y + VoxelData.NormalizedBlockTextureSize - uvOffset));
             _uv.Add(new Vector2(x + VoxelData.NormalizedBlockTextureSize - uvOffset, y + uvOffset));

@@ -10,7 +10,7 @@ using ObjectFieldAlignment = Sirenix.OdinInspector.ObjectFieldAlignment;
 
 namespace MilkSpun.ChunkWorld.Models
 {
-    [CreateAssetMenu(fileName = "BlockConfig", menuName = "MilkSpun/创建Block")]
+    [CreateAssetMenu(fileName = "Config", menuName = "MilkSpun/创建Block")]
     public partial class BlockConfig : ScriptableObject
     {
         [Title("基本设置")] [Tooltip("方块类型")] public VoxelMapType voxelMapType;
@@ -18,25 +18,40 @@ namespace MilkSpun.ChunkWorld.Models
         [Title("纹理ID")]
         [Tooltip("使用第几页纹理")]
         [Range(0, 8)]
-        [OnValueChanged("ShowTexture")]
         public int page;
-        [Tooltip("后面纹理")]
-        [OnValueChanged("ShowTexture")]
+        [Tooltip("后面纹理"), OnValueChanged("ShowTexture")]
         public int backFaceTexture;
-        [Tooltip("前面纹理")]
-        [OnValueChanged("ShowTexture")]
+        [Tooltip("前面纹理"), OnValueChanged("ShowTexture")]
         public int frontFaceTexture;
-        [Tooltip("顶部纹理")]
-        [OnValueChanged("ShowTexture")]
+        [Tooltip("顶部纹理"), OnValueChanged("ShowTexture")]
         public int topFaceTexture;
-        [Tooltip("底部纹理")]
-        [OnValueChanged("ShowTexture")]
+        [Tooltip("底部纹理"), OnValueChanged("ShowTexture")]
         public int bottomFaceTexture;
-        [Tooltip("左面纹理")]
-        [OnValueChanged("ShowTexture")]
+        [Tooltip("左面纹理"), OnValueChanged("ShowTexture")]
         public int leftFaceTexture;
-        [Tooltip("右面纹理")]
-        [OnValueChanged("ShowTexture")]
+        [Tooltip("右面纹理"), OnValueChanged("ShowTexture")]
         public int rightFaceTexture;
     }
+
+    public enum BlockFaceType : byte
+    {
+        Back,
+        Front,
+        Top,
+        Bottom,
+        Left,
+        Right
+    }
+
+    public enum VoxelMapType : byte
+    {
+        Air,
+        LightGrass,
+        Grass,
+        Dirt,
+        Stone,
+        BedRock,
+        Sand
+    }
+
 }
