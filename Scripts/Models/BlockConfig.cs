@@ -2,8 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using MilkSpun.ChunkWorld.Models;
 using Sirenix.OdinInspector;
-using Sirenix.Utilities.Editor;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Serialization;
 using ObjectFieldAlignment = Sirenix.OdinInspector.ObjectFieldAlignment;

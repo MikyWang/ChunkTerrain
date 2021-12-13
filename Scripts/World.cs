@@ -15,18 +15,18 @@ using Random = UnityEngine.Random;
 
 namespace MilkSpun.ChunkWorld.Main
 {
-    public class World : MonoBehaviour
+    public class World : MonoBehaviour, IWorld
     {
         public Material material;
-        public Vector3 spawnPosition;
+        [SerializeField] private Transform cameraRig;
+        [SerializeField] private int seed;
         [SerializeField, InlineEditor] private Biome biome;
         [SerializeField, InlineEditor, Space] private BlockConfig[] blockConfigs;
-        [SerializeField] private Transform player;
-        [SerializeField] private int seed;
         private Chunk[,] _chunks;
         private List<ChunkCoord> _activeChunks;
         private ChunkCoord _playerLastChunkCoord;
         private ChunkCoord _playerChunkCoord;
+        private Vector3 _spawnPosition;
 
         public int NoiseResolution => VoxelData.ChunkWidth;
 
@@ -40,7 +40,7 @@ namespace MilkSpun.ChunkWorld.Main
 
         private void Update()
         {
-            _playerChunkCoord = player.position.GetChunkCoordFromPosition();
+            _playerChunkCoord = cameraRig.position.GetChunkCoordFromPosition();
             if (_playerLastChunkCoord != _playerChunkCoord)
             {
                 CheckViewDistance();
@@ -50,20 +50,20 @@ namespace MilkSpun.ChunkWorld.Main
 
         private void GenerateWorld()
         {
+            var min = Mathf.Max(VoxelData.WorldSizeInChunks / 2 - VoxelData.ViewDistanceInChunks,
+                0);
+            var max = Mathf.Max(VoxelData.WorldSizeInChunks / 2 + VoxelData.ViewDistanceInChunks,
+                0);
             _chunks = new Chunk[VoxelData.WorldSizeInChunks, VoxelData.WorldSizeInChunks];
-            for (var x = VoxelData.WorldSizeInChunks / 2 - VoxelData.ViewDistanceInChunks;
-                 x < VoxelData.WorldSizeInChunks / 2 + VoxelData.ViewDistanceInChunks;
-                 x++)
+            for (var x = min; x < max; x++)
             {
-                for (var z = VoxelData.WorldSizeInChunks / 2 - VoxelData.ViewDistanceInChunks;
-                     z < VoxelData.WorldSizeInChunks / 2 + VoxelData.ViewDistanceInChunks;
-                     z++)
+                for (var z = min; z < max; z++)
                 {
                     CreateChunk(x, z);
                 }
             }
-            player.position = spawnPosition;
-            _playerLastChunkCoord = player.position.GetChunkCoordFromPosition();
+            cameraRig.position = _spawnPosition;
+            _playerLastChunkCoord = cameraRig.position.GetChunkCoordFromPosition();
         }
 
         //TODO:构建复杂地形逻辑
@@ -129,7 +129,7 @@ namespace MilkSpun.ChunkWorld.Main
 
         private void InitChunks()
         {
-            spawnPosition = new Vector3(VoxelData.WorldSizeInVoxels / 2f, VoxelData.ChunkHeight + 2,
+            _spawnPosition = new Vector3(VoxelData.WorldSizeInVoxels / 2f, cameraRig.position.y,
                 VoxelData.WorldSizeInVoxels / 2f);
             for (var i = transform.childCount - 1; i >= 0; i--)
             {
@@ -141,7 +141,7 @@ namespace MilkSpun.ChunkWorld.Main
 
         private void CheckViewDistance()
         {
-            var position = player.position;
+            var position = cameraRig.position;
             var coord = position.GetChunkCoordFromPosition();
 
             var previousActiveChunks = new List<ChunkCoord>(_activeChunks);
@@ -192,6 +192,20 @@ namespace MilkSpun.ChunkWorld.Main
                    y is >= 0 and < VoxelData.ChunkHeight &&
                    z is >= 0 and < VoxelData.WorldSizeInVoxels;
 
+        }
+
+        public bool CheckPositionInWorld(Vector3 position)
+        {
+            var xCheck = Mathf.FloorToInt(position.x);
+            var yCheck = Mathf.FloorToInt(position.y);
+            var zCheck = Mathf.FloorToInt(position.z);
+
+            var xChunk = xCheck / VoxelData.ChunkWidth;
+            var zChunk = zCheck / VoxelData.ChunkWidth;
+            xCheck -= (xChunk * VoxelData.ChunkWidth);
+            zCheck -= (zChunk * VoxelData.ChunkWidth);
+
+            return _chunks[xChunk, zChunk].CheckVoxelInWorld(xCheck, yCheck, zCheck);
         }
 
     }

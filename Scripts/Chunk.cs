@@ -17,6 +17,7 @@ namespace MilkSpun.ChunkWorld.Main
 
         private MeshRenderer _meshRenderer;
         private MeshFilter _meshFilter;
+        // private MeshCollider _meshCollider;
 
         private int _vertexIndex;
         private List<Vector3> _vertices;
@@ -80,6 +81,11 @@ namespace MilkSpun.ChunkWorld.Main
 
             return _world.GetBlockTypeIndex(_voxelMap[x, y, z]).isSolid;
 
+        }
+
+        public bool CheckVoxelInWorld(int x, int y, int z)
+        {
+            return _world.GetBlockTypeIndex(_voxelMap[x, y, z]).isSolid;
         }
 
         private void InitData()
@@ -162,6 +168,7 @@ namespace MilkSpun.ChunkWorld.Main
             mesh.RecalculateNormals();
 
             _meshFilter.mesh = mesh;
+            // _meshCollider.sharedMesh = mesh;
         }
 
         private void AddTexture(int textureID)
